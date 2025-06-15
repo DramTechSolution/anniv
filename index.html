@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Livre d'Anniversaire Interactif pour Joseph</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2c5364;
+            --secondary-color: #ffaf7b;
+            --accent-color: #00fffc;
+            --text-color: #ffffff;
+            --bg-color: #121212;
+            --page-width: 800px;
+            --page-height: 70vh;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: var(--bg-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow-x: hidden;
+            color: var(--text-color);
+            touch-action: pan-y;
+        }
+
+        .app-container {
+            position: relative;
+            width: 100%;
+            max-width: 1000px;
+            padding: 20px;
+        }
+
+        .book-container {
+            position: relative;
+            width: 90vw;
+            max-width: var(--page-width);
+            height: var(--page-height);
+            perspective: 2000px;
+            margin: 5vh auto;
+            user-select: none;
+        }
+
+        .book {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transform-style: preserve-3d;
+            transition: transform 1s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        
+        }
+
+        .book {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transform-style: preserve-3d;
+            transition: transform 1s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        .page {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 15px;
+            overflow: hidden;
+            padding: 30px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.7);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .front-cover {
+            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+            z-index: 2;
+        }
+
+        .back-cover {
+            background: linear-gradient(135deg, #3a1c71, #d76d77, #ffaf7b);
+            transform: rotateY(180deg);
+            z-index: 1;
+        }
+
+        .glitch-text {
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 400;
+            text-transform: uppercase;
+            position: relative;
+            text-shadow: 0.05em 0 0 #00fffc, -0.03em -0.04em 0 #fc00ff, 0.025em 0.04em 0 #fffc00;
+            animation: glitch 650ms infinite;
+            margin-bottom: 1rem;
+            z-index: 3;
+        }
+
+        @keyframes glitch {
+            0% { text-shadow: 0.05em 0 0 #00fffc, -0.03em -0.04em 0 #fc00ff, 0.025em 0.04em 0 #fffc00; }
+            15% { text-shadow: 0.05em 0 0 #00fffc, -0.03em -0.04em 0 #fc00ff, 0.025em 0.04em 0 #fffc00; }
+            16% { text-shadow: -0.05em -0.025em 0 #00fffc, 0.025em 0.035em 0 #fc00ff, -0.05em -0.05em 0 #fffc00; }
+            49% { text-shadow: -0.05em -0.025em 0 #00fffc, 0.025em 0.035em 0 #fc00ff, -0.05em -0.05em 0 #fffc00; }
+            50% { text-shadow: 0.05em 0.035em 0 #00fffc, 0.03em 0 0 #fc00ff, 0 -0.04em 0 #fffc00; }
+            99% { text-shadow: 0.05em 0.035em 0 #00fffc, 0.03em 0 0 #fc00ff, 0 -0.04em 0 #fffc00; }
+            100% { text-shadow: -0.05em 0 0 #00fffc, -0.025em -0.04em 0 #fc00ff, -0.04em -0.025em 0 #fffc00; }
+        }
+
+        .holographic-text {
+            font-size: clamp(2rem, 5vw, 3rem);
+            background: linear-gradient(90deg, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #9400d3);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            animation: rainbow 8s linear infinite;
+            background-size: 400% 100%;
+            text-shadow: 0 0 10px rgba(255,255,255,0.3);
+            margin-bottom: 2rem;
+            z-index: 3;
+        }
+
+        @keyframes rainbow {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 100% 50%; }
+        }
+
+        .photo-frame {
+            width: clamp(120px, 25vw, 220px);
+            height: clamp(120px, 25vw, 220px);
+            border-radius: 50%;
+            border: 5px solid rgba(255, 255, 255, 0.8);
+            box-shadow: 0 0 30px rgba(255,255,255,0.5), 
+                        inset 0 0 20px rgba(255,255,255,0.3);
+            margin: 20px 0;
+            overflow: hidden;
+            position: relative;
+            transition: transform 0.3s, box-shadow 0.3s;
+            z-index: 3;
+        }
+
+        .photo-frame:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 40px var(--accent-color), 
+                       inset 0 0 30px rgba(255,255,255,0.5);
+        }
+
+        .photo-frame img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s;
+        }
+
+        .photo-frame:hover img {
+            transform: scale(1.1);
+        }
+
+        .binary-rain {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.1;
+            pointer-events: none;
+            z-index: 1;
+            overflow: hidden;
+        }
+
+        .particle {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 2;
+            filter: blur(1px);
+        }
+
+        .nav-btn {
+            position: absolute;
+            top: 50%;
+            width: 50px;
+            height: 50px;
+            background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(5px);
+            border: none;
+            border-radius: 50%;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            z-index: 10;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transform: translateY(-50%);
+            transition: all 0.3s;
+            opacity: 0.7;
+        }
+
+        .nav-btn:hover {
+            background: rgba(255,255,255,0.4);
+            opacity: 1;
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .prev-btn {
+            left: 10px;
+        }
+
+        .next-btn {
+            right: 10px;
+        }
+
+        .page-content {
+            position: relative;
+            z-index: 3;
+            width: 90%;
+            max-width: 600px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            overflow-y: auto;
+            padding: 10px;
+        }
+
+        .page-text {
+            font-size: clamp(1rem, 1.5vw, 1.3rem);
+            margin-bottom: 1rem;
+            line-height: 1.6;
+            text-align: center;
+            text-shadow: 0 0 5px rgba(0,0,0,0.5);
+        }
+
+        .signature {
+            font-style: italic;
+            font-size: 1rem;
+            margin-top: 1rem;
+            color: var(--accent-color);
+            text-shadow: 0 0 10px rgba(0, 255, 252, 0.5);
+        }
+
+        .progress-dots {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+            z-index: 10;
+        }
+
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.3);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .dot.active {
+            background: var(--accent-color);
+            transform: scale(1.2);
+        }
+
+        .touch-hint {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.9rem;
+            opacity: 0.7;
+            animation: pulse 2s infinite;
+            z-index: 10;
+            display: none;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.5; }
+            50% { opacity: 1; }
+            100% { opacity: 0.5; }
+        }
+
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: #f00;
+            opacity: 0;
+            z-index: 100;
+        }
+
+        /* Effet de tournage de page */
+        .page-turn {
+            position: absolute;
+            width: 50%;
+            height: 100%;
+            z-index: 5;
+            cursor: pointer;
+        }
+
+        .page-turn.left {
+            left: 0;
+        }
+
+        .page-turn.right {
+            right: 0;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            :root {
+                --page-height: 80vh;
+            }
+
+            .book-container {
+                height: var(--page-height);
+            }
+
+            .page {
+                padding: 20px;
+            }
+
+            .nav-btn {
+                width: 40px;
+                height: 40px;
+                font-size: 1.2rem;
+            }
+
+            .touch-hint {
+                display: block;
+            }
+        }
+
+        @media (max-width: 480px) {
+            :root {
+                --page-height: 85vh;
+            }
+
+            .page {
+                padding: 15px;
+            }
+
+            .nav-btn {
+                width: 35px;
+                height: 35px;
+                font-size: 1rem;
+            }
+
+            .progress-dots {
+                bottom: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <div class="book-container">
+            <button class="nav-btn prev-btn" aria-label="Page précédente">❮</button>
+            <button class="nav-btn next-btn" aria-label="Page suivante">❯</button>
+            
+            <div class="book" id="book">
+                <div class="page front-cover">
+                    <div class="binary-rain" id="front-binary"></div>
+                    <div class="page-content">
+                        <h2 class="glitch-text">JOYEUX ANNIVERSAIRE</h2>
+                        <p class="page-text">Joseph, le génie de l'informatique !</p>
+                        <p class="page-text">
+                            En cette journée spéciale, je te souhaite une avalanche de succès, 
+                            une mémoire cache débordante de bonheur et un processeur toujours à la fréquence maximale !
+                            Que chaque ligne de code que tu écris soit un pas de plus vers la réalisation de tes rêves les plus fous.
+                        </p>
+                        <div class="photo-frame">
+                            <img src="jo.jpg" alt="Joseph" loading="lazy">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="page back-cover">
+                    <div class="binary-rain" id="back-binary"></div>
+                    <div class="page-content">
+                        <h2 class="holographic-text">JOSEPH</h2>
+                        <div class="photo-frame">
+                            <img src="jo.jpg" alt="Joseph" loading="lazy">
+                        </div>
+                        <p class="page-text">
+                            Le meilleur codeur de tous les temps<br>
+                            Joyeux anniversaire à toi ! <br>
+                            Que ta vie soit remplie de bugs corrigés, de projets réussis et de lignes de code élégantes.
+                        </p>
+                        <p class="signature"><i>DramTech</i> </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="progress-dots" id="progressDots"></div>
+            <div class="touch-hint">Balayez pour tourner la page</div>
+        </div>
+    </div>
+
+    <script>
+        // Éléments DOM
+        const book = document.getElementById('book');
+        const prevBtn = document.querySelector('.prev-btn');
+        const nextBtn = document.querySelector('.next-btn');
+        const progressDots = document.getElementById('progressDots');
+        let isFlipped = false;
+        let touchStartX = 0;
+        let touchEndX = 0;
+        let isAnimating = false;
+
+        // Initialisation des points de progression
+        function initProgressDots() {
+            progressDots.innerHTML = '';
+            const pages = document.querySelectorAll('.page');
+            pages.forEach((page, index) => {
+                const dot = document.createElement('div');
+                dot.classList.add('dot');
+                if (index === 0) dot.classList.add('active');
+                dot.addEventListener('click', () => goToPage(index));
+                progressDots.appendChild(dot);
+            });
+        }
+
+        // Mise à jour des points de progression
+        function updateProgressDots() {
+            const dots = document.querySelectorAll('.dot');
+            dots.forEach((dot, index) => {
+                if ((index === 0 && !isFlipped) || (index === 1 && isFlipped)) {
+                    dot.classList.add('active');
+                } else {
+                    dot.classList.remove('active');
+                }
+            });
+        }
+
+        // Animation du livre
+        function flipBook(forward) {
+            if (isAnimating) return;
+            isAnimating = true;
+            
+            if (forward && !isFlipped) {
+                // Avant de tourner, ajustez le z-index pour que la page arrière soit visible
+                document.querySelector('.front-cover').style.zIndex = 1;
+                document.querySelector('.back-cover').style.zIndex = 2;
+                
+                gsap.to(book, {
+                    duration: 1,
+                    rotateY: -180,
+                    ease: "power2.inOut",
+                    onComplete: () => {
+                        isFlipped = true;
+                        isAnimating = false;
+                        updateProgressDots();
+                        createConfetti();
+                    }
+                });
+            } else if (!forward && isFlipped) {
+                gsap.to(book, {
+                    duration: 1,
+                    rotateY: 0,
+                    ease: "power2.inOut",
+                    onComplete: () => {
+                        // Remettre les z-index à leur valeur initiale
+                        document.querySelector('.front-cover').style.zIndex = 2;
+                        document.querySelector('.back-cover').style.zIndex = 1;
+                        
+                        isFlipped = false;
+                        isAnimating = false;
+                        updateProgressDots();
+                    }
+                });
+            } else {
+                isAnimating = false;
+            }
+        }
+
+        // Aller à une page spécifique
+        function goToPage(pageIndex) {
+            if (pageIndex === 0 && isFlipped) {
+                flipBook(false);
+            } else if (pageIndex === 1 && !isFlipped) {
+                flipBook(true);
+            }
+        }
+
+        // Effet de pluie de code binaire
+        function createBinaryRain(container) {
+            const chars = "01";
+            const cols = Math.floor(container.offsetWidth / 15);
+            const rows = Math.floor(container.offsetHeight / 20);
+            
+            for (let i = 0; i < cols; i++) {
+                const col = document.createElement('div');
+                col.style.position = 'absolute';
+                col.style.top = '0';
+                col.style.left = (i * 15) + 'px';
+                col.style.width = '15px';
+                col.style.height = '100%';
+                col.style.color = '#0f0';
+                col.style.fontFamily = 'monospace';
+                col.style.fontSize = '16px';
+                col.style.lineHeight = '20px';
+                col.style.textAlign = 'center';
+                col.style.opacity = '0.7';
+                
+                let text = '';
+                for (let j = 0; j < rows; j++) {
+                    text += chars[Math.floor(Math.random() * chars.length)] + '<br>';
+                }
+                
+                col.innerHTML = text;
+                container.appendChild(col);
+                
+                // Animation
+                let pos = 0;
+                const speed = 100 + Math.random() * 200;
+                setInterval(() => {
+                    pos = (pos + 1) % rows;
+                    col.style.transform = `translateY(-${pos * 20}px)`;
+                }, speed);
+            }
+        }
+        
+        // Particules flottantes
+        function createParticles(container, count) {
+            for (let i = 0; i < count; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                
+                const size = 5 + Math.random() * 10;
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                particle.style.left = `${Math.random() * 100}%`;
+                particle.style.top = `${Math.random() * 100}%`;
+                particle.style.opacity = 0.3 + Math.random() * 0.5;
+                particle.style.background = `hsl(${Math.random() * 360}, 100%, 70%)`;
+                
+                // Animation
+                const duration = 10 + Math.random() * 20;
+                const xMove = (Math.random() - 0.5) * 100;
+                const yMove = (Math.random() - 0.5) * 100;
+                
+                gsap.to(particle, {
+                    x: `${xMove}px`,
+                    y: `${yMove}px`,
+                    duration: duration,
+                    repeat: -1,
+                    yoyo: true,
+                    ease: "sine.inOut"
+                });
+                
+                container.appendChild(particle);
+            }
+        }
+
+        // Effet confetti
+        function createConfetti() {
+            const colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff'];
+            const container = isFlipped ? document.querySelector('.back-cover') : document.querySelector('.front-cover');
+            
+            for (let i = 0; i < 50; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = `${Math.random() * 100}%`;
+                confetti.style.top = '-10px';
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.transform = `rotate(${Math.random() * 360}deg)`;
+                confetti.style.width = `${5 + Math.random() * 10}px`;
+                confetti.style.height = `${5 + Math.random() * 10}px`;
+                container.appendChild(confetti);
+                
+                gsap.to(confetti, {
+                    y: container.offsetHeight + 10,
+                    x: `${(Math.random() - 0.5) * 100}px`,
+                    opacity: 1,
+                    duration: 2 + Math.random() * 3,
+                    ease: "power1.out",
+                    onComplete: () => {
+                        confetti.remove();
+                    }
+                });
+            }
+        }
+
+        // Gestion des événements tactiles
+        function handleTouchStart(e) {
+            touchStartX = e.changedTouches[0].screenX;
+        }
+
+        function handleTouchEnd(e) {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipe();
+        }
+
+        function handleSwipe() {
+            const threshold = 50;
+            if (touchEndX < touchStartX - threshold) {
+                // Swipe gauche
+                flipBook(true);
+            } else if (touchEndX > touchStartX + threshold) {
+                // Swipe droit
+                flipBook(false);
+            }
+        }
+
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', () => {
+            initProgressDots();
+            
+            createBinaryRain(document.getElementById('front-binary'));
+            createBinaryRain(document.getElementById('back-binary'));
+            
+            createParticles(document.querySelector('.front-cover'), 15);
+            createParticles(document.querySelector('.back-cover'), 15);
+
+            // Événements boutons
+            prevBtn.addEventListener('click', () => flipBook(false));
+            nextBtn.addEventListener('click', () => flipBook(true));
+
+            // Événements tactiles
+            book.addEventListener('touchstart', handleTouchStart, { passive: true });
+            book.addEventListener('touchend', handleTouchEnd, { passive: true });
+
+            // Événements clavier
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'ArrowLeft') {
+                    flipBook(false);
+                } else if (e.key === 'ArrowRight') {
+                    flipBook(true);
+                }
+            });
+
+            // Zones cliquables pour tourner les pages
+            const pageTurnLeft = document.createElement('div');
+            pageTurnLeft.className = 'page-turn left';
+            pageTurnLeft.addEventListener('click', () => flipBook(false));
+            book.appendChild(pageTurnLeft);
+
+            const pageTurnRight = document.createElement('div');
+            pageTurnRight.className = 'page-turn right';
+            pageTurnRight.addEventListener('click', () => flipBook(true));
+            book.appendChild(pageTurnRight);
+        });
+
+        // Gestion du redimensionnement
+        window.addEventListener('resize', () => {
+            document.querySelectorAll('.binary-rain').forEach(el => {
+                el.innerHTML = '';
+                createBinaryRain(el);
+            });
+        });
+    </script>
+</body>
+</html>
